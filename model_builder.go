@@ -2,8 +2,8 @@ package swagger
 
 import (
 	"reflect"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 func (b modelBuilder) addModel(st reflect.Type, nameOverride string) *Items {
@@ -32,7 +32,7 @@ func (b modelBuilder) addModel(st reflect.Type, nameOverride string) *Items {
 		return nil
 	}
 	sm := Items{
-		Type:            "object",
+		Type:       "object",
 		Properties: map[string]*Items{}}
 
 	(*b.Definitions)[name] = &sm
@@ -48,6 +48,8 @@ func (b modelBuilder) addModel(st reflect.Type, nameOverride string) *Items {
 
 	for i := 0; i < st.NumField(); i++ {
 		field := st.Field(i)
+		//add json tag
+		field.Name = b.jsonNameOfField(field)
 		sm.Properties[field.Name] = &Items{}
 		ft := field.Type
 		isCollection, ft := detectCollectionType(ft)
@@ -135,10 +137,26 @@ func (b modelBuilder) keyFrom(st reflect.Type) string {
 	}
 	return key
 }
+
 ////// see also https://golang.org/ref/spec#Numeric_types
 func (b modelBuilder) isPrimitiveType(modelName string) bool {
 	if len(modelName) == 0 {
 		return false
 	}
 	return strings.Contains("uint uint8 uint16 uint32 uint64 int int8 int16 int32 int64 float32 float64 bool string byte rune time.Time", modelName)
+}
+
+// jsonNameOfField returns the name of the field as it should appear in JSON format
+// An empty string indicates that this field is not part of the JSON representation
+func (b modelBuilder) jsonNameOfField(field reflect.StructField) string {
+	if jsonTag := field.Tag.Get("json"); jsonTag != "" {
+		s := strings.Split(jsonTag, ",")
+		if s[0] == "-" {
+			// empty name signals skip property
+			return ""
+		} else if s[0] != "" {
+			return s[0]
+		}
+	}
+	return field.Name
 }

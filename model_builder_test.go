@@ -1,8 +1,8 @@
 package swagger
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestSampleToModelAsJson(t *testing.T) {
@@ -19,7 +19,7 @@ func TestSampleToModelAsJson(t *testing.T) {
            "$ref": "#/definitions/item"
        }
      },
-      "rootItem": {
+      "root": {
         "$ref": "#/definitions/item"
        }
      }
@@ -27,7 +27,7 @@ func TestSampleToModelAsJson(t *testing.T) {
   "item": {
     "type": "object",
     "properties": {
-      "itemName": {
+      "name": {
         "type": "string"
        }
      }
@@ -94,7 +94,7 @@ func TestRecursiveStructure(t *testing.T) {
 }
 
 func TestAtMap(t *testing.T) {
-	name := [] string{"Book","Student","Class","abc","ABC"}
+	name := []string{"Book", "Student", "Class", "abc", "ABC"}
 	mapItem := map[string]*Items{}
 	mapItem["Book"] = &Items{}
 	mapItem["Student"] = &Items{}
@@ -102,31 +102,31 @@ func TestAtMap(t *testing.T) {
 	mapItem["abc"] = &Items{}
 	mapItem["ABC"] = &Items{}
 	for _, n := range name {
-		if _, ok := atMap(n, &mapItem); !ok{
+		if _, ok := atMap(n, &mapItem); !ok {
 			t.Errorf("get %v but not %v", false, true)
 		}
 	}
 }
 
 func TestIsPrimitiveType(t *testing.T) {
-	modelName := []string{"uint" ,"uint8" ,"uint16", "uint32", "uint64", "int" ,"int8", "int16",
+	modelName := []string{"uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16",
 		"int32", "int64", "float32", "float64", "bool", "string", "byte", "rune", "time.Time"}
 	b := modelBuilder{}
 	for _, name := range modelName {
-		if ok := b.isPrimitiveType(name); !ok{
+		if ok := b.isPrimitiveType(name); !ok {
 			t.Errorf("get %v but not %v", false, true)
 		}
 	}
 }
 
 type model struct {
-	strType string
-	intType int
-	boolType bool
+	strType   string
+	intType   int
+	boolType  bool
 	sliceType []string
-	ptrType *string
-	mapType map[string]Example
-	exaType Example
+	ptrType   *string
+	mapType   map[string]Example
+	exaType   Example
 }
 
 type Example struct {
@@ -140,8 +140,33 @@ func TestKeyFrom(t *testing.T) {
 	st := reflect.TypeOf(model)
 	for i := 0; i < st.NumField(); i++ {
 		tp := b.keyFrom(st.Field(i).Type)
-		if(tp != typed[i]){
+		if tp != typed[i] {
 			t.Errorf("get %v but not %v", tp, typed[i])
 		}
 	}
+}
+
+func TestJsonTag(t *testing.T) {
+	type X struct {
+		A int
+		B int `json:"C,omitempty"`
+	}
+
+	expected := `{
+	  "X": {
+		"type": "object",
+	   "properties": {
+		"A": {
+		 "type": "integer",
+		 "format": "int32"
+		},
+		"C": {
+		 "type": "integer",
+		 "format": "int32"
+		}
+	   }
+	  }
+	 }`
+
+	testJsonFromStruct(t, X{}, expected)
 }
