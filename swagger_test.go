@@ -1,27 +1,28 @@
 package swagger
 
 import (
-	"testing"
 	"encoding/json"
 	"github.com/emicklei/go-restful"
-	"strings"
 	"os"
+	"strings"
+	"testing"
 )
+
 //测试Info
 func TestInfoStruct(t *testing.T) {
 	config := Config{
 		Info: Info{
-			Title:        		"Title",
-			Description:       	"Description",
-			Version:                "Version",
+			Title:       "Title",
+			Description: "Description",
+			Version:     "Version",
 		},
 	}
 	sws := newSwaggerService(config)
 	listing := APIDefinition{
-		Swagger: swaggerVersion,
-		Info:	sws.config.Info,
+		Swagger:  swaggerVersion,
+		Info:     sws.config.Info,
 		BasePath: "",
-		Paths:	nil,
+		Paths:    nil,
 	}
 	str, err := json.MarshalIndent(listing, "", "    ")
 	if err != nil {
@@ -40,6 +41,7 @@ func TestInfoStruct(t *testing.T) {
 	}
 	`)
 }
+
 //测试Api
 func TestServiceToApi(t *testing.T) {
 	ws := new(restful.WebService)
@@ -85,13 +87,14 @@ func TestServiceToApi(t *testing.T) {
 }
 
 func dummy(req *restful.Request, res *restful.Response) {}
+
 type sample struct {
 	id       string `swagger:"required"` // TODO
 	items    []item
-	rootItem item `json:"root" description:"root desc"`
+	rootItem item `yaml:"root" description:"root desc"`
 }
 type item struct {
-	itemName string `json:"name"`
+	itemName string `yaml:"name"`
 }
 type TestItem struct {
 	Id, Name string
@@ -104,6 +107,7 @@ type Responses struct {
 	Users *[]User
 	Items *[]TestItem
 }
+
 //测试responses
 func TestComposeResponses(t *testing.T) {
 	responseErrors := map[int]restful.ResponseError{}
@@ -119,11 +123,12 @@ func TestComposeResponses(t *testing.T) {
 		t.Errorf("got %s want #/definitions/TestItem", msgs["400"].Schema.Ref)
 	}
 }
+
 //测试Definitions
 func TestAddModel(t *testing.T) {
 	sws := newSwaggerService(Config{})
 	api := APIDefinition{
-		Definitions:        map[string]*Items{}}
+		Definitions: map[string]*Items{}}
 
 	sws.addModelFromSampleTo(Responses{Items: &[]TestItem{}}, &api.Definitions)
 	model, ok := atMap("Responses", &api.Definitions)
@@ -138,13 +143,13 @@ func TestAddModel(t *testing.T) {
 		str = str + key
 	}
 	if !strings.Contains(str, "Code") {
-		t.Fatal("missing code" )
+		t.Fatal("missing code")
 	}
 	if !strings.Contains(str, "Users") {
-		t.Fatal("missing User" )
+		t.Fatal("missing User")
 	}
 	if !strings.Contains(str, "Items") {
-		t.Fatal("missing Items" )
+		t.Fatal("missing Items")
 	}
 	if model.Properties["Code"].Type != "integer" {
 		t.Fatal("wrong code type:" + model.Properties["Code"].Type.(string))
@@ -180,10 +185,10 @@ func TestAddModel(t *testing.T) {
 		str1 = str1 + key
 	}
 	if !strings.Contains(str1, "Id") {
-		t.Fatal("missing User Id" )
+		t.Fatal("missing User Id")
 	}
 	if !strings.Contains(str1, "Name") {
-		t.Fatal("missing User Name" )
+		t.Fatal("missing User Name")
 	}
 	if model1.Properties["Id"].Type != "string" {
 		t.Fatal("wrong User Id type:" + model1.Properties["Id"].Type.(string))
@@ -204,10 +209,10 @@ func TestAddModel(t *testing.T) {
 		str2 = str2 + key
 	}
 	if !strings.Contains(str2, "Id") {
-		t.Fatal("missing TestItem Id" )
+		t.Fatal("missing TestItem Id")
 	}
 	if !strings.Contains(str2, "Name") {
-		t.Fatal("missing TestItem Name" )
+		t.Fatal("missing TestItem Name")
 	}
 	if model2.Properties["Id"].Type != "string" {
 		t.Fatal("wrong TestItem Id type:" + model2.Properties["Id"].Type.(string))
@@ -216,46 +221,48 @@ func TestAddModel(t *testing.T) {
 		t.Fatal("wrong TestItem Name type:" + model2.Properties["Name"].Type.(string))
 	}
 }
+
 //测试将openapi协议以json形式保存在本地
 func TestWriteJsonToFile(t *testing.T) {
 	//测试前请先设定环境变量
 	val := os.Getenv("SWAGGERFILEPATH")
-	os.Remove(val);
-	os.Mkdir(val,0777)
+	os.Remove(val)
+	os.Mkdir(val, 0777)
 	ws := new(restful.WebService)
 	ws.Path("/file")
 	ws.Consumes(restful.MIME_JSON)
 	ws.Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/write").To(dummy).Writes(sample{}))
 	cfg := Config{
-		WebServices:      []*restful.WebService{ws},
-		FileStyle: "json",
+		WebServices:     []*restful.WebService{ws},
+		FileStyle:       "json",
 		SwaggerFilePath: val,
 	}
 	sws := newSwaggerService(cfg)
 	sws.WriteToFile()
-	files, err := ListDir(val,"json")
+	files, err := ListDir(val, "json")
 	if err != nil || len(files) != 1 {
 		t.Fatal("No local json file was generated")
 	}
 }
+
 //测试将openapi协议以yaml形式保存在本地
 func TestWriteYamlToFile(t *testing.T) {
 	val := os.Getenv("SWAGGERFILEPATH")
-	os.RemoveAll(val);
-	os.Mkdir(val,0777)
+	os.RemoveAll(val)
+	os.Mkdir(val, 0777)
 	ws := new(restful.WebService)
 	ws.Path("/file")
 	ws.Consumes(restful.MIME_JSON)
 	ws.Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/write").To(dummy).Writes(sample{}))
 	cfg := Config{
-		WebServices:      []*restful.WebService{ws},
+		WebServices:     []*restful.WebService{ws},
 		SwaggerFilePath: val,
 	}
 	sws := newSwaggerService(cfg)
 	sws.WriteToFile()
-	files, err := ListDir(val,"yaml")
+	files, err := ListDir(val, "yaml")
 	if err != nil || len(files) != 1 {
 		t.Fatal("No local yaml file was generated")
 	}

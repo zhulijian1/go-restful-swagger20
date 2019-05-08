@@ -6,7 +6,7 @@ import (
 )
 
 func TestSampleToModelAsJson(t *testing.T) {
-	testJsonFromStruct(t, sample{items: []item{}}, `{
+	testFromStruct(t, sample{items: []item{}}, `{
   "sample": {
     "type": "object",
     "properties": {
@@ -62,7 +62,7 @@ func TestAnonymousPtrStruct(t *testing.T) {
     }
   }
  }`
-	testJsonFromStruct(t, X{}, expected)
+	testFromStruct(t, X{}, expected)
 }
 
 type File struct {
@@ -72,7 +72,7 @@ type File struct {
 
 //test recursion struct
 func TestRecursiveStructure(t *testing.T) {
-	testJsonFromStruct(t, File{}, `{
+	testFromStruct(t, File{}, `{
   "File": {
    "type": "object",
    "properties": {
@@ -146,11 +146,11 @@ func TestKeyFrom(t *testing.T) {
 	}
 }
 
-func TestJsonTag(t *testing.T) {
+func Test(t *testing.T) {
 	type X struct {
 		A int
-		B int `json:"C"`
-		D int `json:"-"`
+		B int `yaml:"C"`
+		D int `yaml:"-"`
 	}
 
 	expected := `{
@@ -169,5 +169,5 @@ func TestJsonTag(t *testing.T) {
 	  }
 	 }`
 
-	testJsonFromStruct(t, X{}, expected)
+	testFromStruct(t, X{}, expected)
 }

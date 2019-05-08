@@ -48,11 +48,11 @@ func (b modelBuilder) addModel(st reflect.Type, nameOverride string) *Items {
 
 	for i := 0; i < st.NumField(); i++ {
 		field := st.Field(i)
-		//add json tag,if =="" ignore
-		if b.jsonNameOfField(field) == "" {
+		//add tag,if =="" ignore
+		if b.nameOfField(field) == "" {
 			continue
 		} else {
-			field.Name = b.jsonNameOfField(field)
+			field.Name = b.nameOfField(field)
 
 		}
 		sm.Properties[field.Name] = &Items{}
@@ -151,11 +151,11 @@ func (b modelBuilder) isPrimitiveType(modelName string) bool {
 	return strings.Contains("uint uint8 uint16 uint32 uint64 int int8 int16 int32 int64 float32 float64 bool string byte rune time.Time", modelName)
 }
 
-// jsonNameOfField returns the name of the field as it should appear in JSON format
+// nameOfField returns the name of the field as it should appear in JSON format
 // An empty string indicates that this field is not part of the JSON representation
-func (b modelBuilder) jsonNameOfField(field reflect.StructField) string {
-	if jsonTag := field.Tag.Get("json"); jsonTag != "" {
-		s := strings.Split(jsonTag, ",")
+func (b modelBuilder) nameOfField(field reflect.StructField) string {
+	if tag := field.Tag.Get("yaml"); tag != "" {
+		s := strings.Split(tag, ",")
 		if s[0] == "-" {
 			// empty name signals skip property
 			return ""
