@@ -48,8 +48,13 @@ func (b modelBuilder) addModel(st reflect.Type, nameOverride string) *Items {
 
 	for i := 0; i < st.NumField(); i++ {
 		field := st.Field(i)
-		//add json tag
-		field.Name = b.jsonNameOfField(field)
+		//add json tag,if =="" ignore
+		if b.jsonNameOfField(field) == "" {
+			continue
+		} else {
+			field.Name = b.jsonNameOfField(field)
+
+		}
 		sm.Properties[field.Name] = &Items{}
 		ft := field.Type
 		isCollection, ft := detectCollectionType(ft)

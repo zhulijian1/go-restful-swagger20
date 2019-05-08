@@ -149,7 +149,8 @@ func TestKeyFrom(t *testing.T) {
 func TestJsonTag(t *testing.T) {
 	type X struct {
 		A int
-		B int `json:"C,omitempty"`
+		B int `json:"C"`
+		D int `json:"-"`
 	}
 
 	expected := `{
