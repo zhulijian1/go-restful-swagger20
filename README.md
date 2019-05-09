@@ -28,8 +28,8 @@ go struct
 ```go
 	type X struct {
 		A int
-		B int `yaml:"C"`  //Will generate C here
-		D int `yaml:"-"`  //Will ignore it
+		B int `json:"C"`  //Will generate C here
+		D int `json:"-"`  //Will ignore it
 	}
 ```
 result

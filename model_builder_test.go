@@ -149,8 +149,8 @@ func TestKeyFrom(t *testing.T) {
 func Test(t *testing.T) {
 	type X struct {
 		A int
-		B int `yaml:"C"`
-		D int `yaml:"-"`
+		B int `json:"C"`
+		D int `json:"-"`
 	}
 
 	expected := `{

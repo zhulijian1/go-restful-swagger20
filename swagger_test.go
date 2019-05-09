@@ -91,10 +91,10 @@ func dummy(req *restful.Request, res *restful.Response) {}
 type sample struct {
 	id       string `swagger:"required"` // TODO
 	items    []item
-	rootItem item `yaml:"root" description:"root desc"`
+	rootItem item `json:"root" description:"root desc"`
 }
 type item struct {
-	itemName string `yaml:"name"`
+	itemName string `json:"name"`
 }
 type TestItem struct {
 	Id, Name string

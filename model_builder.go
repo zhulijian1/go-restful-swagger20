@@ -154,7 +154,7 @@ func (b modelBuilder) isPrimitiveType(modelName string) bool {
 // nameOfField returns the name of the field as it should appear in JSON format
 // An empty string indicates that this field is not part of the JSON representation
 func (b modelBuilder) nameOfField(field reflect.StructField) string {
-	if tag := field.Tag.Get("yaml"); tag != "" {
+	if tag := field.Tag.Get("json"); tag != "" {
 		s := strings.Split(tag, ",")
 		if s[0] == "-" {
 			// empty name signals skip property
