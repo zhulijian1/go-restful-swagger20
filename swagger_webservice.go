@@ -8,7 +8,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -57,7 +56,6 @@ func (sws SwaggerService) WriteToFile() {
 		if sws.config.FileStyle == "json" {
 			list, err := json.Marshal(listing)
 			if err == nil {
-				os.Stdout.Write(list)
 				err1 := ioutil.WriteFile(sws.config.SwaggerFilePath, list, 0644)
 				if err1 != nil {
 					log.Printf("fail to write to file", err1)
@@ -66,7 +64,6 @@ func (sws SwaggerService) WriteToFile() {
 		} else {
 			list, err := yaml.Marshal(listing)
 			if err == nil {
-				os.Stdout.Write(list)
 				err1 := ioutil.WriteFile(sws.config.SwaggerFilePath, list, 0644)
 				if err1 != nil {
 					log.Printf("fail to write to file", err1)
