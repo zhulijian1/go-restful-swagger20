@@ -1,14 +1,14 @@
 package swagger
 
 import (
-	"encoding/json"
-	"reflect"
-	"testing"
 	"bytes"
-	"strings"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"strings"
+	"testing"
 )
 
 func compareJson(t *testing.T, actualJsonAsString string, expectedJsonAsString string) bool {
@@ -50,7 +50,7 @@ func withLineNumbers(content string) string {
 	}
 	return buffer.String()
 }
-func testJsonFromStruct(t *testing.T, sample interface{}, expectedJson string) bool {
+func testFromStruct(t *testing.T, sample interface{}, expectedJson string) bool {
 	return testJsonFromStructWithConfig(t, sample, expectedJson, &Config{})
 }
 

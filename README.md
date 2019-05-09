@@ -22,6 +22,32 @@ config := swagger.Config{
 } 
 swagger.RegisterSwaggerService(config, restful.DefaultContainer)
 ```
+### How to change or ignore the name of a field 
+
+go struct 
+```go
+	type X struct {
+		A int
+		B int `json:"C"`  //Will generate C here
+		D int `json:"-"`  //Will ignore it
+	}
+```
+result
+```json
+	  "X": {
+		"type": "object",
+	   "properties": {
+		"A": {
+		 "type": "integer",
+		 "format": "int32"
+		},
+		"C": {
+		 "type": "integer",
+		 "format": "int32"
+		}
+	   }
+	  }
+```
 
 
 [Example](./examples)
