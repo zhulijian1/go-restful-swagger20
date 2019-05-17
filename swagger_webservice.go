@@ -76,7 +76,7 @@ func (sws SwaggerService) WriteToFile() {
 
 // RegisterSwaggerService add the WebService that provides the API documentation of all services
 // conform the Swagger documentation specifcation. (https://github.com/wordnik/swagger-core/wiki).
-func RegisterSwaggerService(config Config, wsContainer *restful.Container) {
+func RegisterSwaggerService(config Config, wsContainer *restful.Container) *SwaggerService {
 	sws := newSwaggerService(config)
 	sws.WriteToFile()
 	if sws.config.OpenService == true {
@@ -125,6 +125,7 @@ func RegisterSwaggerService(config Config, wsContainer *restful.Container) {
 			LogInfo("[restful/swagger] Swagger(File)Path is empty ; no UI is served")
 		}
 	}
+	return sws
 }
 
 func staticPathFromRoute(r restful.Route) string {
@@ -492,4 +493,17 @@ func asParamType(kind int) string {
 		return "form"
 	}
 	return ""
+}
+
+//Get Schema information
+func (sws *SwaggerService) GetSchemaInfoList() ([]string, error) {
+	var result []string
+	for _, listing := range sws.apiDeclarationMap.List {
+		list, err := yaml.Marshal(listing)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, string(list))
+	}
+	return result, nil
 }
