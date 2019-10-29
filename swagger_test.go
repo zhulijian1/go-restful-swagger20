@@ -236,7 +236,7 @@ func TestWriteJsonToFile(t *testing.T) {
 	cfg := Config{
 		WebServices:     []*restful.WebService{ws},
 		FileStyle:       "json",
-		SwaggerFilePath: val,
+		OutFilePath: val,
 	}
 	sws := newSwaggerService(cfg)
 	sws.WriteToFile()
@@ -258,7 +258,7 @@ func TestWriteYamlToFile(t *testing.T) {
 	ws.Route(ws.GET("/write").To(dummy).Writes(sample{}))
 	cfg := Config{
 		WebServices:     []*restful.WebService{ws},
-		SwaggerFilePath: val,
+		OutFilePath: val,
 	}
 	sws := newSwaggerService(cfg)
 	sws.WriteToFile()

@@ -17,8 +17,7 @@ config := swagger.Config{
 		OpenService:     true,  //should show it in rest API service
 		WebServicesUrl: "http://localhost:8080",
         ApiPath:        "/apidocs.json", //swagger doc api path
-		SwaggerPath:     "/apidocs/", //local file path
-		SwaggerFilePath: os.Getenv("SWAGGERFILEPATH"),
+		OutFilePath: os.Getenv("SWAGGERFILEPATH"),
 } 
 swagger.RegisterSwaggerService(config, restful.DefaultContainer)
 ```

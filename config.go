@@ -20,31 +20,33 @@ type MapModelTypeNameFunc func(t reflect.Type) (string, bool)
 type Config struct {
 	// url where the services are available, e.g. http://localhost:8080
 	// if left empty then the basePath of Swagger is taken from the actual request
-	WebServicesUrl       string
+	WebServicesUrl string
 	// path where the JSON api is avaiable , e.g. /apidocs
-	ApiPath              string
+	ApiPath string
 	// [optional] path where the swagger UI will be served, e.g. /swagger
-	SwaggerPath          string
+	SwaggerPath string
 	// [optional] location of folder containing Swagger HTML5 application index.html
-	SwaggerFilePath      string
+	SwaggerFilePath string
+	// [optional] location of schema file
+	OutFilePath string
 	//是否开启显示契约的服务，默认不开启
-	OpenService	     bool
+	OpenService bool
 	//写入本地磁盘的格式，json or yaml 默认yaml
-	FileStyle	     string
+	FileStyle string
 	// api listing is constructed from this list of restful WebServices.
-	WebServices          []*restful.WebService
+	WebServices []*restful.WebService
 	// will serve all static content (scripts,pages,images)
-	StaticHandler        http.Handler
+	StaticHandler http.Handler
 	// [optional] on default CORS (Cross-Origin-Resource-Sharing) is enabled.
-	DisableCORS          bool
+	DisableCORS bool
 	// Top-level API version. Is reflected in the resource listing.
-	ApiVersion           string
+	ApiVersion string
 	// If set then call this handler after building the complete ApiDeclaration Map
-	PostBuildHandler     PostBuildDeclarationMapFunc
+	PostBuildHandler PostBuildDeclarationMapFunc
 	// Swagger global info struct
-	Info                 Info
+	Info Info
 	// [optional] If set, model builder should call this handler to get addition typename-to-swagger-format-field conversion.
-	SchemaFormatHandler  MapSchemaFormatFunc
+	SchemaFormatHandler MapSchemaFormatFunc
 	// [optional] If set, model builder should call this handler to retrieve the name for a given type.
 	ModelTypeNameHandler MapModelTypeNameFunc
 }

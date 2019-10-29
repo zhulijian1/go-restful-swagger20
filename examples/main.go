@@ -62,7 +62,7 @@ func main() {
 		//FileStyle:	"json",
 		OpenService:     true,
 		SwaggerPath:     "/apidocs/",
-		SwaggerFilePath: filepath.Join(val,"api.yaml")}
+		OutFilePath: filepath.Join(val,"api.yaml")}
 	config.Info.Description = "This is a sample server Book server"
 	config.Info.Title = "swagger Book"
 	swagger.RegisterSwaggerService(config, restful.DefaultContainer)

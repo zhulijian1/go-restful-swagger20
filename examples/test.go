@@ -128,7 +128,7 @@ func main() {
 
 	config := swagger.Config{
 		WebServices:    restful.RegisteredWebServices(), // you control what services are visible
-		SwaggerFilePath: os.Getenv("SWAGGERFILEPATH")}
+		OutFilePath: os.Getenv("SWAGGERFILEPATH")}
 	swagger.InstallSwaggerService(config)
 
 	log.Print("start listening on localhost:8080")
