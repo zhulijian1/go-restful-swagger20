@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"reflect"
+	"strings"
 
 	"github.com/emicklei/go-restful"
 
@@ -19,8 +21,28 @@ type Book struct {
 	Student []Student
 }
 
+type ID string
+type Age int64
+
 type Student struct {
+	Id   ID  `swag:"string"`
+	Age  Age
 	Name string
+}
+
+func modelTypeNameHandler(st reflect.Type) (string, bool)  {
+	key := st.String()
+
+	if len(st.Name()) == 0 {
+		key = strings.Replace(key, "[]", "", -1)
+	}
+
+	if key=="main.Age" {
+		return "number", true
+	}
+
+
+	return key, true
 }
 
 func main() {
@@ -60,9 +82,10 @@ func main() {
 		WebServicesUrl: "http://localhost:8080",
 		ApiPath:        "/apidocs.json",
 		//FileStyle:	"json",
-		OpenService:     true,
-		SwaggerPath:     "/apidocs/",
-		OutFilePath: filepath.Join(val,"api.yaml")}
+		OpenService: true,
+		SwaggerPath: "/apidocs/",
+		OutFilePath: filepath.Join(val, "api.yaml"),
+		ModelTypeNameHandler: modelTypeNameHandler}
 	config.Info.Description = "This is a sample server Book server"
 	config.Info.Title = "swagger Book"
 	swagger.RegisterSwaggerService(config, restful.DefaultContainer)

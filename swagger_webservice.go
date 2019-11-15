@@ -225,7 +225,7 @@ func composeResponses(route restful.Route, decl *APIDefinition, config *Config) 
 			message.Schema = &Items{}
 			st := reflect.TypeOf(each.Model)
 			isCollection, st := detectCollectionType(st)
-			modelName := modelBuilder{}.keyFrom(st)
+			modelName := modelBuilder{Config:config}.keyFrom(st)
 			if !isCollection {
 				if st.Kind() == reflect.Struct {
 					message.Schema.Ref = getModelName(modelName)
@@ -235,13 +235,13 @@ func composeResponses(route restful.Route, decl *APIDefinition, config *Config) 
 					if st.Kind() == reflect.Struct {
 						message.Schema.Type = "object"
 						message.Schema.AdditionalProperties = &Items{}
-						modelName = modelBuilder{}.keyFrom(st)
+						modelName = modelBuilder{Config:config}.keyFrom(st)
 						message.Schema.AdditionalProperties.Ref = getModelName(modelName)
 						modelBuilder{Definitions: &decl.Definitions, Config: config}.addModel(st, "")
 					} else {
 						message.Schema.Type = "object"
 						message.Schema.AdditionalProperties = &Items{}
-						modelName = modelBuilder{}.keyFrom(st)
+						modelName = modelBuilder{Config:config}.keyFrom(st)
 						message.Schema.AdditionalProperties.Type = getOtherName(modelName)
 						if getOtherName(modelName) == "integer" || getOtherName(modelName) == "number" {
 							message.Schema.AdditionalProperties.Format = getFormat(modelName)
@@ -384,18 +384,18 @@ func buildEndpoint(route restful.Route, decl APIDefinition, sws SwaggerService) 
 	endpoint := getOperation(route)
 	for _, param := range route.ParameterDocs {
 		item := asSwaggerParameter(param.Data())
-		optimizeParameter(item, param.Data(), route.ReadSample)
+		optimizeParameter(item, param.Data(), route.ReadSample, &sws.config)
 		endpoint.Parameters = append(endpoint.Parameters, item)
 	}
 	endpoint.Responses = composeResponses(route, &decl, &sws.config)
 	sws.addModelsFromRouteTo(route, &decl)
 	return endpoint
 }
-func optimizeParameter(item *Items, param restful.ParameterData, readSample interface{}) {
+func optimizeParameter(item *Items, param restful.ParameterData, readSample interface{}, config *Config) {
 	if param.Kind == 2 {
 		if reflect.TypeOf(readSample).Kind() == reflect.Slice || reflect.TypeOf(readSample).Kind() == reflect.Array {
 			item.Type = "array"
-			dataType := modelBuilder{}.keyFrom(reflect.TypeOf(readSample).Elem())
+			dataType := modelBuilder{Config:config}.keyFrom(reflect.TypeOf(readSample).Elem())
 			item.Items = &Items{Ref: getModelName(dataType)}
 		} else {
 			item.Type = nil
