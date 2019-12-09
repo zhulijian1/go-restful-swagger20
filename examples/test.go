@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
-	"os"
 	"github.com/go-chassis/go-restful-swagger20"
+	"os"
 )
 
 // This example is functionally the same as the example in restful-user-resource.go
@@ -23,19 +23,19 @@ type UserService struct {
 func (u UserService) Register() {
 	ws := new(restful.WebService)
 	ws.
-	Path("/users").
+		Path("/users").
 		Consumes(restful.MIME_XML, restful.MIME_JSON).
 		Produces(restful.MIME_JSON, restful.MIME_XML) // you can specify this per route as well
 
 	ws.Route(ws.GET("/").To(u.findAllUsers).
-	// docs
+		// docs
 		Doc("get all users").
 		Operation("findAllUsers").
 		Writes(User{}).
 		Returns(200, "OK", nil))
 
 	ws.Route(ws.GET("/{user-id}").To(u.findUser).
-	// docs
+		// docs
 		Doc("get a user").
 		Operation("findUser").
 		Param(ws.PathParameter("user-id", "identifier of the user").DataType("string")).
@@ -43,20 +43,20 @@ func (u UserService) Register() {
 		Returns(404, "Not Found", nil))
 
 	ws.Route(ws.PUT("/{user-id}").To(u.updateUser).
-	// docs
+		// docs
 		Doc("update a user").
 		Operation("updateUser").
 		Param(ws.PathParameter("user-id", "identifier of the user").DataType("string")).
 		Reads(User{})) // from the request
 
 	ws.Route(ws.PUT("").To(u.createUser).
-	// docs
+		// docs
 		Doc("create a user").
 		Operation("createUser").
 		Reads(User{})) // from the request
 
 	ws.Route(ws.DELETE("/{user-id}").To(u.removeUser).
-	// docs
+		// docs
 		Doc("delete a user").
 		Operation("removeUser").
 		Param(ws.PathParameter("user-id", "identifier of the user").DataType("string")))
@@ -127,7 +127,7 @@ func main() {
 	u.Register()
 
 	config := swagger.Config{
-		WebServices:    restful.RegisteredWebServices(), // you control what services are visible
+		WebServices: restful.RegisteredWebServices(), // you control what services are visible
 		OutFilePath: os.Getenv("SWAGGERFILEPATH")}
 	swagger.InstallSwaggerService(config)
 

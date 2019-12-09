@@ -290,13 +290,23 @@ func (sws SwaggerService) addModelFromSampleTo(sample interface{}, items *map[st
 }
 
 func getOperation(route restful.Route) *Endpoint {
-	return &Endpoint{
+	ep := &Endpoint{
 		Summary:     route.Doc,
 		Description: route.Notes,
 		OperationId: route.Operation,
 		Consumes:    route.Consumes,
 		Produces:    route.Produces,
 		Parameters:  Parameters{}}
+	if route.Metadata != nil && route.Metadata["tags"] != nil {
+		tags, ok := route.Metadata["tags"].([]string)
+		if !ok {
+			log.Print("invalid tags,tags must be a string slice")
+		} else {
+			ep.Tags = tags
+		}
+	}
+
+	return ep
 }
 
 func (sws SwaggerService) composeDeclaration(ws *restful.WebService, pathPrefix string) APIDefinition {

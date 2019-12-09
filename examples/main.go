@@ -54,7 +54,7 @@ func main() {
 	ws.Route(ws.GET("/{medium}").To(getBookById).
 		Doc("Search a books").
 		Param(ws.PathParameter("medium", "digital or paperback").DataType("string")).
-		Param(ws.QueryParameter("language", "en,nl,de").DataType("string")).
+		Param(ws.QueryParameter("language", "en,nl,de").DataType("string")).Metadata("tags",[]string{"users","desc"}).
 		Param(ws.HeaderParameter("If-Modified-Since", "last known timestamp").DataType("string").DataFormat("datetime")).
 		Returns(200, "haha", Book{}))
 
@@ -86,6 +86,7 @@ func main() {
 		SwaggerPath: "/apidocs/",
 		OutFilePath: filepath.Join(val, "api.yaml"),
 		ModelTypeNameHandler: modelTypeNameHandler}
+
 	config.Info.Description = "This is a sample server Book server"
 	config.Info.Title = "swagger Book"
 	swagger.RegisterSwaggerService(config, restful.DefaultContainer)
